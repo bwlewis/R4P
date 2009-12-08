@@ -1,0 +1,13 @@
+JRI=$$(R --vanilla --slave -e "cat (system.file(package='rJava'))")
+PKG_LIBS+=$(JRI)/libs/rJava.so
+
+.PHONY: all
+all: before $(SHLIB) after
+before:
+	@$$([ -z "${PROCESSING}" ]) && echo -e "\033[1mERROR: You must set the PROCESSING environment variable to your Processing\ninstallation path. For example, run something like:\n\nexport PROCESSING=/home/${USER}/processing-1.0.8\n\nand try to install this package again.\033[0m" && exit 1 || echo
+
+after:
+	javac -Xlint -source 1.5 -target 1.5 -d . -cp $(JRI)/jri/JRI.jar:${PROCESSING}/lib/core.jar processing/R4P/*.java && jar -cf R4P.jar R4P && mv R4P.jar ../inst/lib/
+	@cp -aR ../inst/R4P.sh "${PROCESSING}/"
+	@cd ../inst && tar -cf - sketchbook | tar -C ~ -xvf -
+	@echo -e "\033[1mWelcome to R4P. Use the ${PROCESSING}/R4P.sh script\nto start up Processing\nwith R connectivity enabled. The boids and simpleR4P example projects were\ninstalled into your sketchbook directory. Have fun!\n\n\033[0m"

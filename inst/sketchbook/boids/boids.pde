@@ -1,0 +1,47 @@
+import R4P.*;
+
+flock fl;
+R4P R;
+
+void setup () {
+  size(600, 400);
+  noStroke();
+  background(0);
+  fill(0, 102, 153, 204);
+  textFont(createFont("SansSerif",10));
+  smooth();
+  noCursor();
+  R = new R4P (this, true);
+  fl = new flock (R);
+}
+
+void bupdate (double[] q)
+{
+  int N = fl.N;
+  for (int j=0;j<N;j++) {
+    fl.Boids[j][0] = (float)q[j];      // x
+    fl.Boids[j][1] = (float)q[j+N];    // y
+    fl.Boids[j][2] = (float)q[j+2*N];  // x velocity
+    fl.Boids[j][3] = (float)q[j+3*N];  // y velocity
+    fl.Boids[j][4] = (float)q[j+4*N];  // count of nearby boids
+  }
+}
+
+void mousePressed ()
+{
+  R.re.eval ("mousePressed()");
+  if (blue(fl.repulsor)==255) fl.repulsor=color(255,0,0);
+  else if (red(fl.repulsor)==255) fl.repulsor=color(0,255,0);
+  else fl.repulsor=color(0,0,255);
+}
+
+void yelp (String s) 
+{
+  System.out.println(s);
+}
+
+void draw () 
+{
+  background(0);
+  fl.run();
+}

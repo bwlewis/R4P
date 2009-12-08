@@ -1,0 +1,11 @@
+Package: R4P
+Type: Package
+Title: R library for Processing
+Version: 0.4
+Date: 2009-08-31
+Author: Mike Kane and B W Lewis
+Maintainer: Bryan W. Lewis <bwaynelewis@gmail.com>
+Description: The R4P libraries help Processing programs call R fuctions and vice versa. Working installations of both R and Processing must exist on the system and be of the same bitness.
+Depends: rJava
+License: GPL (== 2.0)
+LazyLoad: yes
