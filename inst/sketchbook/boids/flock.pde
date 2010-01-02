@@ -1,13 +1,18 @@
+/* The drawing of the flock occurs here. 
+ * The R engine is also configured and instructed to
+ * load the 'boids.R' script here.
+ */
 
 class flock 
 {
-
   R4P R;
-  int N = 55;
+  int N = 75;
   float r = 2.0;
+  boolean drawBoids = true;
   public float Boids[][];
   public color repulsor = color(0,255,0);
-
+  public boolean dens = false;
+  
   flock (R4P Re) 
   {
     R = Re;
@@ -17,16 +22,30 @@ class flock
     int [] NN={
       N    };
     R.re.assign ("N", NN);
-    R.re.eval ("source ('boids.R')");
+    R.re.eval ("source ('~/sketchbook/boids/boids.R')");
+    R.re.eval("pdevSetup()");
   }
 
   void render ()
   {
-    PVector loc, vel;
-    stroke (repulsor);
-    fill (repulsor);
-    ellipseMode (CENTER);
-    ellipse (mouseX, mouseY, 5, 5);
+    drawFlock(false);
+    if(dens) {
+      drawFlock(true);
+      filter(BLUR,55);
+      R.re.eval("plotContour()");
+      drawFlock(false);
+      noLoop();
+      drawBoids = false;
+    }
+  }
+
+  void drawFlock(boolean bt)
+  {
+    PVector loc, vel; 
+    stroke(repulsor);
+    fill(0,0,0);
+    ellipseMode(CENTER);
+    ellipse(mouseX, mouseY, 3, 3);
     for (int j=0;j<N;++j){
       loc = new PVector (Boids[j][0], Boids[j][1]);
       vel = new PVector (Boids[j][2], Boids[j][3]);
@@ -47,21 +66,29 @@ class flock
         fill (255,0,0); 
         stroke (255,0,0);
       }
-      pushMatrix ();
-      translate (loc.x, loc.y);
-      rotate (theta);
-      beginShape (TRIANGLES);
-      vertex (0,-r*2);
-      vertex (-r,r*2);
-      vertex (r,r*2);
-      endShape ();
-      popMatrix (); 
+      if (bt) {
+        fill (255,0,0,100); 
+        stroke (255,0,0,100);
+        ellipseMode (CENTER);
+        ellipse (loc.x, loc.y, 20, 20);
+      }
+      else {
+        pushMatrix ();
+        translate (loc.x, loc.y);
+        rotate (theta);
+        beginShape (TRIANGLES);
+        vertex (0,-r*2);
+        vertex (-r,r*2);
+        vertex (r,r*2);
+        endShape ();
+        popMatrix (); 
+      }
     }
   }
 
   void run () {
     R.re.eval ("step()");
-    render ();
+    if (drawBoids) render();
   }
 
 }

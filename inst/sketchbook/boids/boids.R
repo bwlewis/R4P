@@ -2,7 +2,7 @@
 # columns hold loc.x,loc.y,vel.x,vel.y.
 
 # XXX Initialize r, N, width, height from Processing
-# or uncomment to run only in R
+# or uncomment to run only in R without Processing.
 # N = 30
 # width = 100
 # height = 100
@@ -29,6 +29,7 @@ go = function (n)
 {
   for (j in 1:n) {
     step ()
+# Comment step () above and uncomment below to run from R without Processing:
 #    plot (Boids[,1:2],xlim=c(0,width),ylim=c(0,height), xlab="", ylab="")
   }
 }
@@ -67,7 +68,6 @@ flock = function ()
 
 # Not surprisingly,  we find that most of
 # the time is spent in the following apply loops.
-# It's not clear how to speed this code up natively in R.
 
 # Check for nearby boids and steer away (separation) 
   hood = (dst>0 & dst<desiredseparation)
@@ -123,4 +123,33 @@ update = function (acc)
   b[,1] = x
   b[,2] = y
   Boids <<- b
+}
+
+plotContour <- function()
+{
+  x <- .jcall(PApplet,"[I","getPixels")
+  x <- argb(x)
+  X <- matrix(x,width,height)
+  X <- X[,height:1]
+  contour(X,col=5,nlevels=3,drawlabels=FALSE)
+}
+
+pdevSetup <- function()
+{
+  pdev(bg="black")
+  par(oma=c(0,0,0,0),mar=c(0,0,0,0))
+  par(xaxs="i",yaxs="i")
+  par(xaxt="n",yaxt="n",bty="n")
+}
+
+argb <- function (x)
+{
+  y <- 256 - sign(x)*x %/% 2^24
+  x <- x %% 2^24
+  y <- x %/% 2^16
+  x <- x %% 2^16
+  y <- y + x%/%2^8
+  x <- x %% 2^8
+  y <- y + x
+  y <- 100*y/max(y)
 }

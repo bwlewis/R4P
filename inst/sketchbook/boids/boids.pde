@@ -15,6 +15,12 @@ void setup () {
   fl = new flock (R);
 }
 
+int[] getPixels ()
+{
+  loadPixels();
+  return ((int[])pixels);
+}
+
 void bupdate (double[] q)
 {
   int N = fl.N;
@@ -29,15 +35,35 @@ void bupdate (double[] q)
 
 void mousePressed ()
 {
-  R.re.eval ("mousePressed()");
-  if (blue(fl.repulsor)==255) fl.repulsor=color(255,0,0);
-  else if (red(fl.repulsor)==255) fl.repulsor=color(0,255,0);
-  else fl.repulsor=color(0,0,255);
+  if (mouseButton==RIGHT) {
+    fl.dens = !fl.dens;
+    fl.drawBoids = true;
+    loop();
+  }
+  else {
+    R.re.eval ("mousePressed()");
+    if (blue(fl.repulsor)==255) fl.repulsor=color(255,0,0);
+    else if (red(fl.repulsor)==255) fl.repulsor=color(0,255,0);
+    else fl.repulsor=color(0,0,255);
+  }
 }
 
 void yelp (String s) 
 {
   System.out.println(s);
+}
+
+void densify ()
+{
+  PVector loc, vel;
+  for (int j=0;j<fl.N;++j){
+    loc = new PVector (fl.Boids[j][0], fl.Boids[j][1]);
+    vel = new PVector (fl.Boids[j][2], fl.Boids[j][3]);
+    float theta = vel.heading2D() + PI/2;
+    stroke (5,0,0);
+    ellipseMode (CENTER);
+    ellipse (loc.x, loc.y, 200, 200);
+  }
 }
 
 void draw () 
