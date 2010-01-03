@@ -18,6 +18,8 @@ class flock
     R = Re;
     Boids = new float[N][5];
     R.re.eval ("cat ('Welcome to R4P!\n')");
+    R.re.eval ("cat ('Mouse left-click to change curosr behavior (attractor/repulsor).\n')");
+    R.re.eval ("cat ('Mouse right-click to switch to a contour plot (and back).\n')");
     R.re.eval ("r=2.0");
     int [] NN={
       N    };
